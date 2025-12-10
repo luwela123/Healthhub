@@ -1,0 +1,253 @@
+ /* General Styles */
+ body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #0c2a3e;
+    color: rgb(60, 28, 123);
+    line-height: 1.6;
+}
+
+/* Header Section */
+header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    padding: 2em;
+    background: linear-gradient(rgba(12, 42, 0, 0), rgba(0, 42, 62, 0.9)), 
+                url('assets/Background.jpg') no-repeat center center/cover;
+    color: #fff;
+}
+
+header h1 {
+    font-size: 3em;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+}
+
+header p {
+    font-size: 1.5em;
+    max-width: 700px;
+    margin: 0 auto 2em;
+}
+
+header nav ul {
+    display: flex;
+    gap: 2em;
+    list-style: none;
+    padding: 0;
+}
+
+header nav ul li {
+    display: inline;
+}
+
+header nav ul li a {
+    color: #ffc107;
+    text-decoration: none;
+    font-size: 1.2em;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+header nav ul li a:hover {
+    color: #f4a900;
+}
+
+/* Section Styles */
+.section {
+    padding: 4em 2em;
+    text-align: center;
+    background-color: #f5f5f5;
+    color: #0c2a3e;
+}
+
+.section:nth-child(even) {
+    background-color: #0c2a3e;
+    color: white;
+}
+
+.section h2 {
+    font-size: 2.5em;
+    margin-bottom: 1em;
+}
+
+.section p {
+    font-size: 1.2em;
+    max-width: 800px;
+    margin: 0 auto 2em;
+}
+
+.services-list,
+.tools-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2em;
+    list-style: none;
+    padding: 0;
+}
+
+.services-list li,
+.tools-list li {
+    width: 180px;
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 8px;
+    padding: 1em;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.services-list li:hover,
+.tools-list li:hover {
+    transform: translateY(-5px);
+}
+
+.services-list li img,
+.tools-list li img {
+    max-width: 120px;
+    width: auto;
+    height: auto;
+    background-size: small;
+    background-position: center;
+    margin-bottom: 0em;
+}
+
+/* Star Ratings */
+.rating {
+    font-size: 1.5em;
+    color: #ffc107;
+    margin-top: 0.5em;
+}
+
+/* Video Section */
+video {
+    max-width: 20%;
+    margin: 1em auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer Section */
+footer {
+    text-align: center;
+    padding: 3em 1em;
+    background-color: #0c2a3e;
+    color: white;
+}
+
+footer h2 {
+    margin-bottom: 1em;
+    font-size: 3em;
+}
+
+footer p {
+    margin-bottom: 2em;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+footer a img {
+    width: 30px;
+    margin: 0 0.5em;
+    transition: transform 0.3s;
+}
+
+footer a img:hover {
+    transform: scale(7.2);
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+    header h1 {
+        font-size: 2.5em;
+    }
+
+    header p {
+        font-size: 1.2em;
+    }
+
+    .section h2 {
+        font-size: 2em;
+    }
+
+    .services-list li,
+    .tools-list li {
+        width: 150px;
+        height: 180px;
+    }
+
+    .services-list li img,
+    .tools-list li img {
+        max-width: 100px;
+    }
+}
+/* Section Styles */
+.section {
+width: 100%;
+max-width: 1200px;
+margin: 0 auto;
+padding: 20px;
+}
+
+.section h2 {
+text-align: center;
+font-size: 2em;
+margin-bottom: 10px;
+}
+
+.section p {
+text-align: center;
+font-size: 1.2em;
+margin-bottom: 20px;
+}
+
+/* Services List Styles */
+.services-list {
+display: flex;
+gap: 20px;
+flex-wrap: wrap;
+justify-content: center;
+}
+
+.services-list li {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+width: 300px;
+height: 400px;
+padding: 20px;
+margin: 10px;
+border: 1px solid #ccc;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+background-color: #f9f9f9;
+text-align: center;
+}
+
+.services-list li img {
+width: 100%;
+height: auto;
+max-width: 250px;
+border-radius: 10px;
+margin-bottom: 15px;
+}
+
+.services-list li h3 {
+color: black;
+font-size: 1.5em;
+margin-bottom: 10px;
+}
+
+.services-list li p {
+color: black;
+font-size: 1em;
+}

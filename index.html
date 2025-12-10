@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthHub</title>
+
+    <style>
+        /* --- GLOBAL STYLING --- */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #ffffff;
+        }
+
+        /* ================= NAVIGATION BAR ================= */
+        .navbar {
+            width: 100%;
+            background: #005eb8;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10000;
+        }
+
+        .nav-logo {
+            color: #fff;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-links li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        .nav-links li a:hover {
+            opacity: 0.7;
+        }
+
+        /* --- DROPDOWN MENU --- */
+        .dropdown {
+            position: relative;
+        }
+
+        .drop-btn {
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .dropdown-menu {
+            list-style: none;
+            position: absolute;
+            top: 40px;
+            left: 0;
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px 0;
+            width: 180px;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .dropdown-menu li a {
+            display: block;
+            padding: 10px 15px;
+            color: #005eb8;
+        }
+
+        .dropdown-menu li a:hover {
+            background: #eaf3ff;
+        }
+
+        /* show dropdown on hover (desktop) */
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        /* --- HAMBURGER MENU --- */
+        .hamburger {
+            width: 30px;
+            height: 22px;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            height: 4px;
+            width: 100%;
+            background: rgb(12, 188, 191);
+            border-radius: 4px;
+        }
+
+        /* --- MOBILE NAVIGATION --- */
+        @media(max-width: 768px){
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                position: absolute;
+                top: 70px;
+                right: 0;
+                background: #005eb8;
+                width: 220px;
+                flex-direction: column;
+                align-items: start;
+                padding: 20px;
+                gap: 15px;
+                display: none;
+                border-radius: 0 0 0 12px;
+            }
+
+            .nav-links.show {
+                display: flex;
+            }
+
+            .dropdown-menu {
+                position: static;
+                background: #fff;
+                width: 100%;
+                margin-top: 5px;
+                box-shadow: none;
+            }
+
+            .dropdown:hover .dropdown-menu {
+                display: none;
+            }
+
+            .drop-btn {
+                width: 100%;
+                color: #fff;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        /* ================= HEALTH VIDEO SECTION ================= */
+        .health-section {
+            padding: 60px 20px;
+            background: #f3f8ff;
+            text-align: center;
+        }
+        .health-section h2 {
+            margin-bottom: 10px;
+            font-size: 2rem;
+            color: #005eb8;
+        }
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1100px;
+            margin: auto;
+        }
+        .video-card {
+            background: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+            transition: 0.2s;
+        }
+        .video-card:hover { transform: translateY(-6px); }
+        .video-card img { width: 100%; border-radius: 10px; }
+        .video-card h3 { margin: 10px 0; font-size: 1rem; }
+
+        .watch-btn {
+            background: #005eb8;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            margin-top: 8px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        /* --- VIDEO MODAL --- */
+        .video-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 10px;
+        }
+        .video-modal-content {
+            background: #fff;
+            max-width: 900px;
+            width: 100%;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: white;
+            z-index: 10;
+        }
+        .iframe-wrapper { position: relative; padding-bottom: 56.25%; height: 0; }
+        .iframe-wrapper iframe {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ================= NAVIGATION BAR ================= -->
+<nav class="navbar">
+    <div class="nav-logo">HealthHub</div>
+
+    <!-- Hamburger -->
+    <div class="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+    </div>
+
+    <ul class="nav-links" id="navMenu">
+        <li><a href="#home">Home</a></li>
+
+        <!-- DROPDOWN -->
+        <li class="dropdown">
+            <a class="drop-btn">Services ▾</a>
+            <ul class="dropdown-menu">
+                <li><a href="#health">Health Videos</a></li>
+                <li><a href="#consult">Consultation</a></li>
+                <li><a href="#tips">Daily Health Tips</a></li>
+            </ul>
+        </li>
+
+        <li><a href="#about">About</a></li>
+    </ul>
+</nav>
+
+
+<!-- ================= HEALTH VIDEOS ================= -->
+<section class="health-section" id="health">
+    <h2>HealthHub</h2>
+    <p>Healthcare is why we care</p>
+
+    <div class="video-grid" id="healthVideoGrid"></div>
+</section>
+
+<script>
+/* ================= NAVBAR SCRIPT ================= */
+function toggleMenu(){
+    document.getElementById("navMenu").classList.toggle("show");
+}
+
+/* Mobile dropdown */
+document.querySelectorAll(".drop-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const dropdown = btn.nextElementSibling;
+        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    });
+});
+
+/* ================= HEALTH VIDEO SCRIPT ================= */
+const healthVideos = [
+  { id: "SvfWxRh9TGE", title: "Early Signs ng Mental Health Problems - Payo ni Doc Willie Ong" },
+  { id: "Soix5IfMf70", title: "14 Bawal Gawin Kung May Nerbyos at Anxiety - Doc Willie Ong" },
+  { id: "gqMibNy06a8", title: "Filipino Fitness Mistakes You Need To STOP Making" },
+  { id: "3AuScSvjp2w", title: "Ultimate Nutrition Guide | Dr. Dex Macalintal" }
+];
+
+const healthGrid = document.querySelector('#healthVideoGrid');
+
+healthVideos.forEach(v => {
+  const card = document.createElement('div');
+  card.className = 'video-card';
+  card.innerHTML = `
+    <img src="https://img.youtube.com/vi/${v.id}/hqdefault.jpg">
+    <h3>${v.title}</h3>
+    <span class="watch-btn" onclick="openHealthVideo('${v.id}')">Watch</span>
+  `;
+  healthGrid.appendChild(card);
+});
+
+function openHealthVideo(id){
+  const modal = document.createElement('div');
+  modal.className = 'video-modal';
+  modal.innerHTML = `
+    <div class="video-modal-content">
+      <span class="close-btn" onclick="this.closest('.video-modal').remove()">×</span>
+      <div class="iframe-wrapper">
+        <iframe src="https://www.youtube.com/embed/${id}" allowfullscreen></iframe>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  modal.addEventListener("click", e => {
+      if (e.target === modal) modal.remove();
+  });
+}
+</script>
+
+</body>
+</html>
