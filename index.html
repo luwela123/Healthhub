@@ -1,320 +1,465 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HealthHub</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HealthHub — Dark Mode (Adjustable)</title>
 
-    <style>
-        /* --- GLOBAL STYLING --- */
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #ffffff;
-        }
+  <style>
+    /**
+     * --------------- THEME VARIABLES (EASY TO EDIT) ---------------
+     * Change these variables to tune how dark the theme is.
+     *
+     * --dark-bg   : page background in dark mode (change this to make the page darker/lighter)
+     * --dark-text : primary text color in dark mode
+     * --dark-card : card / navbar / modal background in dark mode
+     *
+     * Tip: pick hex colors. Example darker: #000814, medium dark: #0f172a, lighter dark: #2f3846
+     * --------------------------------------------------------------------
+     */
+    :root{
+      /* LIGHT THEME (default) */
+      --light-bg: #ffffff;
+      --light-text: #1f2937;      /* dark gray text */
+      --light-soft: #f4f8ff;      /* section background */
+      --light-card: #ffffff;      /* cards, modal */
 
-        /* ================= NAVIGATION BAR ================= */
-        .navbar {
-            width: 100%;
-            background: #005eb8;
-            padding: 15px 25px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 10000;
-        }
+      /* DARK THEME (easy to adjust) */
+      --dark-bg: #121e3a3a;         /* <-- change this to adjust how dark the page is */
+      --dark-text: #e6eef8;
+      --dark-card: #2f3a52;
 
-        .nav-logo {
-            color: #fff;
-            font-size: 1.4rem;
-            font-weight: bold;
-        }
+      /* Common */
+      --primary: #005eb8;
+      --accent: #2b6cb0;
+      --card-radius: 12px;
+      --shadow: 0 6px 20px rgba(0,0,0,0.12);
+      --shadow-dark: 0 6px 24px rgba(0,0,0,0.22);
+      --max-width: 1200px;
+    }
 
-        .nav-links {
-            list-style: none;
-            display: flex;
-            gap: 25px;
-            align-items: center;
-        }
+    /* --------- Base / Reset --------- */
+    * { box-sizing: border-box; }
+    html,body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--light-bg);
+      color: var(--light-text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      transition: background-color 300ms ease, color 300ms ease;
+      line-height: 1.5;
+    }
 
-        .nav-links li a {
-            color: #fff;
-            text-decoration: none;
-            font-size: 1rem;
-            transition: 0.2s;
-        }
+    a { color: inherit; text-decoration: none; }
 
-        .nav-links li a:hover {
-            opacity: 0.7;
-        }
+    /* --------- NAVBAR --------- */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 26px;
+      gap: 20px;
+    }
 
-        /* --- DROPDOWN MENU --- */
-        .dropdown {
-            position: relative;
-        }
+    .nav-left { display:flex; align-items:center; gap:18px; }
+    .nav-logo {
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: 0.2px;
+    }
 
-        .drop-btn {
-            cursor: pointer;
-            color: #fff;
-        }
+    /* nav center (links) */
+    .nav-center {
+      display:flex;
+      gap: 22px;
+      align-items:center;
+    }
+    .nav-center a {
+      color: #fff;
+      font-weight:600;
+      font-size:0.98rem;
+      opacity:0.95;
+    }
 
-        .dropdown-menu {
-            list-style: none;
-            position: absolute;
-            top: 40px;
-            left: 0;
-            background: #fff;
-            border-radius: 8px;
-            padding: 10px 0;
-            width: 180px;
-            display: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
+    /* nav-right houses the toggle (keeps it at upper-right) */
+    .nav-right { display:flex; align-items:center; gap:12px; }
 
-        .dropdown-menu li a {
-            display: block;
-            padding: 10px 15px;
-            color: #005eb8;
-        }
+    /* --------- SIMPLE RECTANGULAR ON/OFF SWITCH (Option C) ---------
+       Structure:
+         <label class="rect-switch">
+           <input type="checkbox" id="darkToggle">
+           <span class="rect-slider"><span class="rect-knob"></span></span>
+         </label>
+       - Knob slides left/right
+       - Slider shows ON/OFF text
+    ------------------------------------------------------------------*/
+    .rect-switch { display:inline-block; user-select:none; }
+    .rect-switch input { display:none; } /* hide default checkbox */
 
-        .dropdown-menu li a:hover {
-            background: #eaf3ff;
-        }
+    .rect-slider {
+      display:inline-flex;
+      align-items:center;
+      justify-content: flex-start;
+      width: 66px;
+      height: 30px;
+      background: rgba(255,255,255,0.18);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 6px;
+      font-weight:700;
+      font-size: 0.78rem;
+      color: white;
+      cursor: pointer;
+      transition: background 220ms ease;
+      box-shadow: var(--shadow);
+    }
 
-        /* show dropdown on hover (desktop) */
-        .dropdown:hover .dropdown-menu {
-            display: block;
-        }
+    .rect-slider .rect-knob {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+      transform: translateX(0);
+      transition: transform 220ms cubic-bezier(.2,.9,.3,1), background 220ms;
+    }
 
-        /* --- HAMBURGER MENU --- */
-        .hamburger {
-            width: 30px;
-            height: 22px;
-            display: none;
-            flex-direction: column;
-            justify-content: space-between;
-            cursor: pointer;
-        }
+    /* OFF text visible when unchecked; use ::after for ON */
+    .rect-slider::after {
+      content: "OFF";
+      margin-left: auto;
+      margin-right: 8px;
+      opacity: 0.95;
+    }
 
-        .hamburger span {
-            height: 4px;
-            width: 100%;
-            background: rgb(12, 188, 191);
-            border-radius: 4px;
-        }
+    /* when checked -> move knob to right and change background */
+    .rect-switch input:checked + .rect-slider {
+      background: rgba(0,0,0,0.15);
+      justify-content: flex-end;
+    }
+    .rect-switch input:checked + .rect-slider .rect-knob {
+      transform: translateX(0);
+      background: #e6eef8;
+    }
+    .rect-switch input:checked + .rect-slider::after {
+      content: "ON";
+      color: #ffd66b;
+    }
 
-        /* --- MOBILE NAVIGATION --- */
-        @media(max-width: 768px){
-            .hamburger {
-                display: flex;
-            }
+    /* a small text label next to toggle */
+    .toggle-label {
+      color: white;
+      font-weight:600;
+      font-size:0.92rem;
+      margin-right: 6px;
+    }
 
-            .nav-links {
-                position: absolute;
-                top: 70px;
-                right: 0;
-                background: #005eb8;
-                width: 220px;
-                flex-direction: column;
-                align-items: start;
-                padding: 20px;
-                gap: 15px;
-                display: none;
-                border-radius: 0 0 0 12px;
-            }
+    /* --------- HEALTH SECTION & GRID --------- */
+    .health-section {
+      padding: 64px 20px;
+      background: var(--light-soft);
+      text-align: center;
+      transition: background-color 300ms ease;
+    }
 
-            .nav-links.show {
-                display: flex;
-            }
+    .container { max-width: var(--max-width); margin: 0 auto; }
 
-            .dropdown-menu {
-                position: static;
-                background: #fff;
-                width: 100%;
-                margin-top: 5px;
-                box-shadow: none;
-            }
+    .health-section h2 {
+      margin: 0;
+      font-size: 2.1rem;
+      color: var(--primary);
+      font-weight: 800;
+    }
+    .health-section p {
+      margin-top:8px;
+      color: #445566;
+      font-size: 1rem;
+    }
 
-            .dropdown:hover .dropdown-menu {
-                display: none;
-            }
+    .video-grid {
+      margin-top: 36px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px,1fr));
+      gap: 24px;
+      padding: 12px;
+    }
 
-            .drop-btn {
-                width: 100%;
-                color: #fff;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-        }
+    .video-card {
+      background: var(--light-card);
+      border-radius: var(--card-radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+      text-align:center;
+      min-height: 320px;
+      display:flex;
+      flex-direction:column;
+      justify-content: space-between;
+    }
 
-        /* ================= HEALTH VIDEO SECTION ================= */
-        .health-section {
-            padding: 60px 20px;
-            background: #f3f8ff;
-            text-align: center;
-        }
-        .health-section h2 {
-            margin-bottom: 10px;
-            font-size: 2rem;
-            color: #005eb8;
-        }
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            padding: 20px;
-            max-width: 1100px;
-            margin: auto;
-        }
-        .video-card {
-            background: #fff;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
-            transition: 0.2s;
-        }
-        .video-card:hover { transform: translateY(-6px); }
-        .video-card img { width: 100%; border-radius: 10px; }
-        .video-card h3 { margin: 10px 0; font-size: 1rem; }
+    .video-card img {
+      width:100%;
+      border-radius: 8px;
+      max-height: 170px;
+      object-fit:cover;
+    }
 
-        .watch-btn {
-            background: #005eb8;
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 6px;
-            margin-top: 8px;
-            display: inline-block;
-            cursor: pointer;
-        }
+    .video-card h3 {
+      font-size: 1rem;
+      margin: 12px 6px 8px 6px;
+      color: #2c6ba5;
+      font-weight:700;
+    }
 
-        /* --- VIDEO MODAL --- */
-        .video-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            padding: 10px;
-        }
-        .video-modal-content {
-            background: #fff;
-            max-width: 900px;
-            width: 100%;
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
-        }
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 28px;
-            cursor: pointer;
-            color: white;
-            z-index: 10;
-        }
-        .iframe-wrapper { position: relative; padding-bottom: 56.25%; height: 0; }
-        .iframe-wrapper iframe {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-    </style>
+    .watch-btn {
+      background: var(--primary);
+      color: white;
+      padding: 9px 14px;
+      border-radius: 8px;
+      display:inline-block;
+      cursor:pointer;
+      font-weight:700;
+      margin-top: 12px;
+    }
+
+    /* modal */
+    .video-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(22, 21, 21, 0.8);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      z-index: 950;
+      padding: 18px;
+    }
+    .video-modal-content {
+      width: 100%;
+      max-width: 920px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--light-card);
+    }
+    .iframe-wrapper { position: relative; padding-bottom: 56.25%; height:0; }
+    .iframe-wrapper iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+
+    .close-btn {
+      position:absolute;
+      right:14px;
+      top:8px;
+      color:white;
+      font-size:28px;
+      cursor:pointer;
+      z-index:1001;
+    }
+
+    /* --------- RESPONSIVE --------- */
+    @media (max-width:900px){
+      .nav-center { display:none; } /* simpler layout on smaller screens */
+      .navbar { padding: 12px 16px; }
+      .health-section { padding: 46px 16px; }
+    }
+
+    /* -------------------- DARK MODE USING VARIABLES -------------------- */
+    body.dark {
+      background: var(--dark-bg);
+      color: var(--dark-text);
+    }
+
+    body.dark .navbar { background: var(--dark-card); }
+    body.dark .nav-center a { color: var(--dark-text); opacity:0.95; }
+
+    body.dark .health-section { background: var(--dark-bg); }
+    body.dark .video-card {
+      background: var(--dark-card);
+      box-shadow: var(--shadow-dark);
+    }
+    body.dark .video-card h3 { color: var(--dark-text); }
+    body.dark .watch-btn { background: var(--accent); }
+
+    body.dark .video-modal-content { background: var(--dark-card); }
+    /* ensure toggle text is readable against navbar */
+    body.dark .toggle-label, body.dark .rect-slider { color: #f3f6fb; }
+  </style>
 </head>
 <body>
 
-<!-- ================= NAVIGATION BAR ================= -->
-<nav class="navbar">
-    <div class="nav-logo">HealthHub</div>
-
-    <!-- Hamburger -->
-    <div class="hamburger" onclick="toggleMenu()">
-        <span></span><span></span><span></span>
+  <!-- NAV -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <div class="nav-logo">HealthHub</div>
     </div>
 
-    <ul class="nav-links" id="navMenu">
-        <li><a href="#home">Home</a></li>
+    <!-- center links (hidden on small screens) -->
+    <div class="nav-center">
+      <a href="#home">Home</a>
+      <div class="dropdown" style="position:relative;">
+        <a href="#services">Services ▾</a>
+        <ul style="
+            list-style:none;
+            margin:0;
+            padding:8px 0;
+            position:absolute;
+            top:34px;
+            left:0;
+            background:white;
+            border-radius:8px;
+            box-shadow:0 6px 18px rgba(0,0,0,0.12);
+            display:none;
+          " class="dropdown-menu">
+          <li style="padding:8px 12px"><a href="#health">Health Videos</a></li>
+          <li style="padding:8px 12px"><a href="#consult">Consultation</a></li>
+          <li style="padding:8px 12px"><a href="#tips">Daily Tips</a></li>
+        </ul>
+      </div>
+      <a href="#about">About</a>
+    </div>
 
-        <!-- DROPDOWN -->
-        <li class="dropdown">
-            <a class="drop-btn">Services ▾</a>
-            <ul class="dropdown-menu">
-                <li><a href="#health">Health Videos</a></li>
-                <li><a href="#consult">Consultation</a></li>
-                <li><a href="#tips">Daily Health Tips</a></li>
-            </ul>
-        </li>
+    <!-- right area: label + rectangular toggle (Option C) -->
+    <div class="nav-right">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="toggle-label" aria-hidden="true">Dark Mode</div>
 
-        <li><a href="#about">About</a></li>
-    </ul>
-</nav>
+        <label class="rect-switch" title="Toggle dark mode">
+          <input id="darkToggle" type="checkbox" aria-label="Toggle dark mode">
+          <span class="rect-slider" role="switch" aria-checked="false">
+            <span class="rect-knob" aria-hidden="true"></span>
+          </span>
+        </label>
+      </div>
+    </div>
+  </nav>
 
+  <!-- HEALTH SECTION -->
+  <section class="health-section" id="health">
+    <div class="container">
+      <h2>HealthHub</h2>
+      <p>Healthcare is why we care</p>
 
-<!-- ================= HEALTH VIDEOS ================= -->
-<section class="health-section" id="health">
-    <h2>HealthHub</h2>
-    <p>Healthcare is why we care</p>
-
-    <div class="video-grid" id="healthVideoGrid"></div>
-</section>
+      <div class="video-grid" id="healthVideoGrid">
+        <!-- JS will populate cards here -->
+      </div>
+    </div>
+  </section>
 
 <script>
-/* ================= NAVBAR SCRIPT ================= */
-function toggleMenu(){
-    document.getElementById("navMenu").classList.toggle("show");
-}
+  /* ---------------- NAV DROPDOWN (simple show/hide for the demo) ---------------- */
+  (function setupDropdown(){
+    const dd = document.querySelector('.dropdown');
+    if(!dd) return;
+    const menu = dd.querySelector('.dropdown-menu');
+    dd.addEventListener('mouseenter', ()=> menu.style.display = 'block');
+    dd.addEventListener('mouseleave', ()=> menu.style.display = 'none');
+  })();
 
-/* Mobile dropdown */
-document.querySelectorAll(".drop-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-        const dropdown = btn.nextElementSibling;
-        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-    });
-});
+  /* ---------------- DARK MODE ----------------
+     - Toggles body.dark
+     - Saves preference in localStorage ('theme' -> 'dark'|'light')
+     - Rectangular toggle shows ON/OFF text; we keep aria and checked synchronized
+  ------------------------------------------------------------------------------*/
+  const toggle = document.getElementById('darkToggle');
 
-/* ================= HEALTH VIDEO SCRIPT ================= */
-const healthVideos = [
-  { id: "SvfWxRh9TGE", title: "Early Signs ng Mental Health Problems - Payo ni Doc Willie Ong" },
-  { id: "Soix5IfMf70", title: "14 Bawal Gawin Kung May Nerbyos at Anxiety - Doc Willie Ong" },
-  { id: "gqMibNy06a8", title: "Filipino Fitness Mistakes You Need To STOP Making" },
-  { id: "3AuScSvjp2w", title: "Ultimate Nutrition Guide | Dr. Dex Macalintal" }
-];
+  function applyTheme(isDark){
+    if(isDark) {
+      document.body.classList.add('dark');
+      toggle.checked = true;
+      // update aria
+      document.querySelector('.rect-slider').setAttribute('aria-checked','true');
+    } else {
+      document.body.classList.remove('dark');
+      toggle.checked = false;
+      document.querySelector('.rect-slider').setAttribute('aria-checked','false');
+    }
+  }
 
-const healthGrid = document.querySelector('#healthVideoGrid');
-
-healthVideos.forEach(v => {
-  const card = document.createElement('div');
-  card.className = 'video-card';
-  card.innerHTML = `
-    <img src="https://img.youtube.com/vi/${v.id}/hqdefault.jpg">
-    <h3>${v.title}</h3>
-    <span class="watch-btn" onclick="openHealthVideo('${v.id}')">Watch</span>
-  `;
-  healthGrid.appendChild(card);
-});
-
-function openHealthVideo(id){
-  const modal = document.createElement('div');
-  modal.className = 'video-modal';
-  modal.innerHTML = `
-    <div class="video-modal-content">
-      <span class="close-btn" onclick="this.closest('.video-modal').remove()">×</span>
-      <div class="iframe-wrapper">
-        <iframe src="https://www.youtube.com/embed/${id}" allowfullscreen></iframe>
-      </div>
-    </div>`;
-  document.body.appendChild(modal);
-
-  modal.addEventListener("click", e => {
-      if (e.target === modal) modal.remove();
+  // Toggle handler
+  toggle.addEventListener('change', () => {
+    const isDark = toggle.checked;
+    applyTheme(isDark);
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
   });
-}
+
+  // Apply saved theme on load
+  window.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // Priority: saved setting > system preference > default light
+    if(saved === 'dark' || (!saved && prefersDark)) {
+      applyTheme(true);
+    } else {
+      applyTheme(false);
+    }
+  });
+
+  /* --------------- Health video loader + modal --------------- */
+  const healthVideos = [
+    { id: "SvfWxRh9TGE", title: "Early Signs ng Mental Health Problems - Payo ni Doc Willie Ong" },
+    { id: "Soix5IfMf70", title: "14 Bawal Gawin Kung May Nerbyos at Anxiety - Doc Willie Ong" },
+    { id: "gqMibNy06a8", title: "Filipino Fitness Mistakes You Need To STOP Making" },
+    { id: "3AuScSvjp2w", title: "Ultimate Nutrition Guide | Dr. Dex Macalintal" },
+    { id: "81G22t2UHxA", title: "A Balanced Diet: Understanding Food Groups And Healthy Eating | Nutritionist Explains | Myprotein" },
+    { id: "TxfIGuoQlvI", title: "First Time Weight Training? | 8 Weight Training tips for BEGINNERS" }
+  ];
+
+  const grid = document.getElementById('healthVideoGrid');
+
+  function createCard(v) {
+    const card = document.createElement('div');
+    card.className = 'video-card';
+    card.innerHTML = `
+      <div>
+        <img src="https://img.youtube.com/vi/${v.id}/hqdefault.jpg" alt="${v.title} thumbnail" />
+        <h3>${v.title}</h3>
+      </div>
+      <div style="margin-top:10px;">
+        <button class="watch-btn" type="button" aria-label="Watch ${v.title}" data-id="${v.id}">Watch</button>
+      </div>
+    `;
+    return card;
+  }
+
+  // populate
+  healthVideos.forEach(v => grid.appendChild(createCard(v)));
+
+  // open modal on click
+  grid.addEventListener('click', (e) => {
+    const btn = e.target.closest('.watch-btn');
+    if(!btn) return;
+    const id = btn.dataset.id;
+    openVideoModal(id);
+  });
+
+  function openVideoModal(youtubeId){
+    const modal = document.createElement('div');
+    modal.className = 'video-modal';
+    modal.innerHTML = `
+      <div style="position:relative; width:100%; max-width:920px;">
+        <div class="video-modal-content">
+          <div style="position:relative;">
+            <span class="close-btn" aria-label="Close">×</span>
+            <div class="iframe-wrapper">
+              <iframe src="https://www.youtube.com/embed/${youtubeId}?rel=0" title="Video player" allowfullscreen></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    // click close or background
+    modal.addEventListener('click', (ev)=>{
+      if(ev.target === modal || ev.target.classList.contains('close-btn')) {
+        modal.remove();
+      }
+    });
+  }
 </script>
 
 </body>
